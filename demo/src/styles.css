@@ -1,0 +1,76 @@
+body {
+  padding-top: 20px;
+}
+
+.profile {
+  align-items: center;
+  /* border-bottom: 1px solid #ccc; */
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+}
+
+.profile button  {
+  margin-left: auto;
+}
+
+.profile img {
+  margin-right: 20px;
+/*   height: 48px; */
+/*   width: 48px; */
+}
+
+/* .profile__info h3 { */
+.profile > div:nth-child(2) h3 {
+  font-size: 22px;
+  margin: 0 0 5px 0;
+}
+
+.load-profile label {
+  display: block;
+}
+
+.load-profile p {
+  margin-top: 10px;
+}
+
+.twitter-start {
+  text-align: center;
+}
+
+.twitter-stream h2 {
+  background: #369;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 18px;
+  padding: 10px;
+  text-align: center;
+}
+
+.tweets {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.tweet {
+  background: #eee;
+  border-radius: 4px;
+  padding: 10px;
+}
+
+.tweet img {
+  display: inline-block;
+  margin-top: 10px;
+  width: 50%;
+}
+
+.tweet + .tweet {
+  margin-top: 20px;
+}
+
+.tweet h4 {
+  font-size: 16px;
+  margin: 0 0 5px 0;
+}
