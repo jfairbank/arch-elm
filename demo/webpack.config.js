@@ -13,12 +13,13 @@ const config = {
   output: {
     path: path.resolve(__dirname, 'public'),
     filename: 'bundle.js',
-    publicPath: 'http://localhost:8000/src/',
+    publicPath: 'http://localhost:8000/',
   },
 
   resolve: {
     modulesDirectories: ['node_modules'],
     extensions: ['', '.js', '.elm'],
+    root: path.resolve(__dirname, 'src'),
   },
 
   module: {
