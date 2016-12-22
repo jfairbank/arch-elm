@@ -1,8 +1,7 @@
 {
   "scripts": {
-    "dev": "concurrently 'npm run dev:app' 'npm run dev:server'",
-    "dev:app": "webpack-dev-server --inline --hot --port 8000",
-    "dev:server": "node server.js"
+    "dev": "node server.js",
+    "start": "node ."
   },
   "dependencies": {
     "cors": "^2.8.1",
