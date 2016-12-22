@@ -1,6 +1,7 @@
 {
   "scripts": {
     "build": "webpack",
+    "deploy": "NODE_ENV=production npm run build && cp CNAME public && surge public",
     "dev": "webpack-dev-server --inline --hot --port 8000"
   },
   "dependencies": {

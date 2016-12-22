@@ -1,5 +1,6 @@
 {
   "scripts": {
-    "deploy:api": "git subtree push --prefix demo/api heroku master"
+    "deploy:api": "git subtree push --prefix demo/api heroku master",
+    "deploy:app": "pushd demo/app; npm run deploy; popd"
   }
 }
