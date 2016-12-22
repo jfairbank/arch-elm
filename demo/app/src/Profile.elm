@@ -4,6 +4,7 @@ import Http
 import Html exposing (..)
 import Html.Attributes exposing (class, src, type_, value)
 import Html.Events exposing (onClick, onInput)
+import Urls exposing (httpUrl)
 import User exposing (userDecoder, User)
 
 
@@ -22,7 +23,7 @@ type Msg
 
 url : String -> String
 url screenName =
-    "http://twitter-stream.dev/user/" ++ screenName
+    httpUrl ++ "/user/" ++ screenName
 
 
 userRequest : String -> Http.Request User

@@ -1,24 +1,17 @@
 {
   "scripts": {
-    "dev": "concurrently 'npm run dev:app' 'npm run dev:server'",
-    "dev:app": "webpack-dev-server --inline --hot --port 8000",
-    "dev:server": "node server.js"
+    "build": "webpack",
+    "dev": "webpack-dev-server --inline --hot --port 8000"
   },
   "dependencies": {
-    "concurrently": "^3.1.0",
-    "cors": "^2.8.1",
     "css-loader": "^0.26.1",
     "elm": "^0.18.0",
     "elm-hot-loader": "^0.5.3",
     "elm-webpack-loader": "^4.0.0",
-    "express": "^4.14.0",
     "file-loader": "^0.9.0",
-    "rx": "^4.1.0",
     "style-loader": "^0.13.1",
-    "twitter": "^1.7.0",
     "webpack": "^1.14.0",
-    "webpack-dev-server": "^1.16.2",
-    "ws": "^1.1.1"
+    "webpack-dev-server": "^1.16.2"
   },
   "devDependencies": {
     "eslint": "^3.12.2",

@@ -4,14 +4,12 @@ const WebSocketServer = require('ws').Server;
 const app = require('express')();
 const cors = require('cors');
 const { Observable } = require('rx');
+const lru = require('lru-cache');
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
-// const PORT = process.env.PORT;
-const PORT = 8081;
-
-const QUERY = '#codemash';
-// const QUERY = 'javascript';
+const PORT = process.env.PORT || 8081;
+const QUERY = process.env.QUERY || '#codemash';
 
 const twitter = new Twitter({
   consumer_key: process.env.TWITTER_CONSUMER_KEY,
@@ -62,14 +60,17 @@ wss.on('connection', (ws) => {
 
 app.use(cors());
 
-const users = {};
+const usersCache = lru({
+  max: 20,
+  maxAge: 60 * 1000 * 1000,
+});
 
 function cacheUser(user) {
-  users[user.screen_name] = user;
+  usersCache.set(user.screen_name, user);
 }
 
 function retrieveUser(screenName) {
-  const cachedUser = users[screenName];
+  const cachedUser = usersCache.get(screenName);
 
   if (cachedUser) {
     return Promise.resolve(cachedUser);
@@ -93,6 +94,8 @@ app.get('/user/:screenName', (req, res, next) => {
 });
 
 server.listen(PORT, () => {
-  // eslint-disable-next-line no-console
-  console.log(`Server listening at http://localhost:${PORT}`);
+  if (process.env.NODE_ENV === 'development') {
+    // eslint-disable-next-line no-console
+    console.log(`Server listening at http://localhost:${PORT}`);
+  }
 });

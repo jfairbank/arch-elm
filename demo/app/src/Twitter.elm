@@ -5,6 +5,7 @@ import Html exposing (..)
 import Html.Attributes exposing (class, src)
 import Json.Decode exposing (decodeString, list, string, Decoder)
 import Json.Decode.Pipeline exposing (decode, optional, required)
+import Urls exposing (wsUrl)
 import User exposing (User, userDecoder)
 import WebSocket exposing (listen)
 
@@ -34,7 +35,7 @@ type Msg
 
 url : String
 url =
-    "ws://twitter-stream.dev"
+    wsUrl
 
 
 photoDecoder : Decoder Photo
