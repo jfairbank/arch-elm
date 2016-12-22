@@ -10,13 +10,11 @@ import WebSocket exposing (listen)
 
 
 type alias Photo =
-    { url : String
-    }
+    { url : String }
 
 
 type alias Entities =
-    { photos : List Photo
-    }
+    { photos : List Photo }
 
 
 type alias Tweet =
@@ -27,8 +25,7 @@ type alias Tweet =
 
 
 type alias Model =
-    { tweets : List Tweet
-    }
+    List Tweet
 
 
 type Msg
@@ -67,8 +64,7 @@ parseTweet =
 
 initialModel : Model
 initialModel =
-    { tweets = []
-    }
+    []
 
 
 init : ( Model, Cmd Msg )
@@ -113,24 +109,24 @@ twitterStreamView tweets =
 
 
 view : Model -> Html Msg
-view model =
-    twitterStreamView model.tweets
+view tweets =
+    twitterStreamView tweets
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
+update msg tweets =
     case msg of
         TweetMsg message ->
             case parseTweet message of
                 Ok tweet ->
-                    ( { model | tweets = tweet :: model.tweets }, Cmd.none )
+                    ( tweet :: tweets, Cmd.none )
 
                 Err _ ->
-                    ( model, Cmd.none )
+                    ( tweets, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
-subscriptions model =
+subscriptions _ =
     listen url TweetMsg
 
 

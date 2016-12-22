@@ -2,9 +2,8 @@ module Profile exposing (..)
 
 import Http
 import Html exposing (..)
-import Html.Attributes exposing (class, src, type_)
+import Html.Attributes exposing (class, src, type_, value)
 import Html.Events exposing (onClick, onInput)
-import Result exposing (map, toMaybe, withDefault)
 import User exposing (userDecoder, User)
 
 
@@ -17,8 +16,8 @@ type alias Model =
 type Msg
     = UpdateScreenName String
     | FetchProfile
-    | Clear
     | Load (Result Http.Error User)
+    | Clear
 
 
 url : String -> String
@@ -43,28 +42,9 @@ initialModel =
     }
 
 
-init : ( Model, Cmd Msg )
+init : ( Model, Cmd msg )
 init =
     ( initialModel, Cmd.none )
-
-
-loadUserView : Html msg
-loadUserView =
-    div [] [ text "load profile" ]
-
-
-profileView : User -> Html Msg
-profileView user =
-    div
-        [ class "profile" ]
-        [ img [ src user.profileImageUrl ] []
-        , div
-            []
-            [ h3 [] [ text (user.name ++ " (@" ++ user.screenName ++ ")") ]
-            , div [] [ text user.description ]
-            ]
-        , button [ class "btn btn-default", onClick Clear ] [ text "Clear" ]
-        ]
 
 
 loadProfileView : Model -> Html Msg
@@ -73,7 +53,12 @@ loadProfileView model =
         [ class "load-profile" ]
         [ h4 [] [ text "Load Profile" ]
         , label [] [ text "Screen Name" ]
-        , input [ type_ "text", onInput UpdateScreenName ] []
+        , input
+            [ type_ "text"
+            , value model.screenName
+            , onInput UpdateScreenName
+            ]
+            []
         , p
             []
             [ button
@@ -83,11 +68,32 @@ loadProfileView model =
         ]
 
 
+displayName : User -> String
+displayName user =
+    user.name ++ " (@" ++ user.screenName ++ ")"
+
+
+profileView : User -> Html Msg
+profileView user =
+    div
+        [ class "profile" ]
+        [ img [ src user.profileImageUrl ] []
+        , div
+            []
+            [ h3 [] [ text (displayName user) ]
+            , div [] [ text user.description ]
+            ]
+        , button
+            [ class "btn btn-default", onClick Clear ]
+            [ text "Clear" ]
+        ]
+
+
 view : Model -> Html Msg
 view model =
     case model.profile of
-        Just user ->
-            div [] [ profileView user ]
+        Just profile ->
+            div [] [ profileView profile ]
 
         Nothing ->
             div [] [ loadProfileView model ]
@@ -105,16 +111,20 @@ update msg model =
             else
                 ( model, getUser model.screenName )
 
-        Clear ->
-            ( { model | profile = Nothing }, Cmd.none )
-
         Load result ->
             case result of
                 Ok profile ->
-                    ( { model | profile = Just profile }, Cmd.none )
+                    ( { model
+                        | profile = Just profile
+                      }
+                    , Cmd.none
+                    )
 
                 Err _ ->
                     ( model, Cmd.none )
+
+        Clear ->
+            ( { model | profile = Nothing }, Cmd.none )
 
 
 subscriptions : Model -> Sub msg

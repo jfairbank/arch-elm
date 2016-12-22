@@ -1,6 +1,6 @@
 module User exposing (..)
 
-import Json.Decode exposing (decodeString, string, Decoder)
+import Json.Decode exposing (string, Decoder)
 import Json.Decode.Pipeline exposing (decode, required)
 
 

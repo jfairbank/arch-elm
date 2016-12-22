@@ -46,14 +46,22 @@ update msg model =
                 ( newProfile, cmd ) =
                     Profile.update subMsg model.profile
             in
-                ( { model | profile = newProfile }, Cmd.map ProfileMsg cmd )
+                ( { model
+                    | profile = newProfile
+                  }
+                , Cmd.map ProfileMsg cmd
+                )
 
         TwitterMsg subMsg ->
             let
                 ( newTwitter, cmd ) =
                     Twitter.update subMsg model.twitter
             in
-                ( { model | twitter = newTwitter }, Cmd.map TwitterMsg cmd )
+                ( { model
+                    | twitter = newTwitter
+                  }
+                , Cmd.map TwitterMsg cmd
+                )
 
 
 subscriptions : Model -> Sub Msg

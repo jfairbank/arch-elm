@@ -4,15 +4,29 @@ const webpack = require('webpack');
 const production = process.env.NODE_ENV === 'production';
 
 const config = {
-  entry: [
-    path.resolve(__dirname, 'src/index.html'),
-    path.resolve(__dirname, 'src/styles.css'),
-    path.resolve(__dirname, 'src/index.js'),
-  ],
+  entry: {
+    main: [
+      path.resolve(__dirname, 'src/index.html'),
+      path.resolve(__dirname, 'src/styles.css'),
+      path.resolve(__dirname, 'src/index.js'),
+    ],
+
+    profile: [
+      path.resolve(__dirname, 'src/profile.html'),
+      path.resolve(__dirname, 'src/styles.css'),
+      path.resolve(__dirname, 'src/profile-main.js'),
+    ],
+
+    twitter: [
+      path.resolve(__dirname, 'src/twitter.html'),
+      path.resolve(__dirname, 'src/styles.css'),
+      path.resolve(__dirname, 'src/twitter-main.js'),
+    ],
+  },
 
   output: {
     path: path.resolve(__dirname, 'public'),
-    filename: 'bundle.js',
+    filename: '[name].bundle.js',
     publicPath: 'http://localhost:8000/',
   },
 
