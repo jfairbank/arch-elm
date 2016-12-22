@@ -2,5 +2,5 @@
 elm-stuff/
 # elm-repl generated files
 repl-temp-*
-demo/app/public/
+app/public/
 node_modules/

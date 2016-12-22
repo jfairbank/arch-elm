@@ -1,7 +1,7 @@
 {
   "scripts": {
-    "dev": "node server.js",
-    "start": "node ."
+    "dev": "NODE_ENV=development node .",
+    "start": "NODE_ENV=production node ."
   },
   "dependencies": {
     "cors": "^2.8.1",

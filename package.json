@@ -1,6 +1,12 @@
 {
   "scripts": {
-    "deploy:api": "git subtree push --prefix demo/api heroku master",
-    "deploy:app": "pushd demo/app; npm run deploy; popd"
+    "dev": "concurrently 'npm run dev:api' 'npm run dev:app'",
+    "dev:api": "cd api && npm run dev",
+    "dev:app": "cd app && npm run dev",
+    "deploy:api": "git subtree push --prefix api heroku master",
+    "deploy:app": "pushd app; npm run deploy; popd"
+  },
+  "devDependencies": {
+    "concurrently": "^3.1.0"
   }
 }
