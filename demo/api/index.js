@@ -8,6 +8,7 @@ const lru = require('lru-cache');
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
+const ORIGIN = process.env.ORIGIN || 'twitter-stream.dev';
 const PORT = process.env.PORT || 8081;
 const QUERY = process.env.QUERY || '#codemash';
 
@@ -58,7 +59,7 @@ wss.on('connection', (ws) => {
   });
 });
 
-app.use(cors());
+app.use(cors({ origin: ORIGIN }));
 
 const usersCache = lru({
   max: 20,
