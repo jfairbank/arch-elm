@@ -3,14 +3,21 @@ const Twitter = require('twitter');
 const WebSocketServer = require('ws').Server;
 const app = require('express')();
 const cors = require('cors');
-const { Observable } = require('rx');
+const { Observable } = require('rxjs');
 const lru = require('lru-cache');
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
-const ORIGIN = process.env.ORIGIN || 'twitter-stream.dev';
-const PORT = process.env.PORT || 8081;
-const QUERY = process.env.QUERY || '#codemash';
+const TWEET_REPLAY = 50;
+
+const {
+  NODE_ENV,
+  ORIGIN,
+  PORT = 8081,
+  QUERY = '#codemash',
+} = process.env;
+
+const isProduction = NODE_ENV === 'production';
 
 const twitter = new Twitter({
   consumer_key: process.env.TWITTER_CONSUMER_KEY,
@@ -30,36 +37,51 @@ const streamTo = client => (message) => {
   client.send(JSON.stringify(message));
 };
 
-function getTweetStream(query) {
-  const initialPromise = twitter.get('search/tweets', { q: query });
-  const stream = twitter.stream('statuses/filter', { track: query });
+function searchTweets(query) {
+  const searchOptions = {
+    q: query,
+    result_type: 'recent',
+    include_entities: true,
+  };
+
+  const initialPromise = twitter.get('search/tweets', searchOptions);
 
   return Observable.fromPromise(initialPromise)
-    .flatMap(tweets => tweets.statuses.slice(0, 10))
-    .concat(Observable.fromEvent(stream, 'data'));
+    .flatMap(tweets => tweets.statuses.slice(0, TWEET_REPLAY).reverse());
 }
 
-const tweets$ = getTweetStream(QUERY);
+function getTweetStream(query) {
+  const streamOptions = { track: query };
+  const stream = twitter.stream('statuses/filter', streamOptions);
+
+  return Observable.fromEvent(stream, 'data');
+}
 
 function randomDelayTime() {
   const minTime = 1000;
-  const maxTime = 5000;
+  const maxTime = 3000;
 
   return Math.floor(Math.random() * maxTime) + minTime;
 }
 
+const tweets$ = getTweetStream(QUERY);
+
 wss.on('connection', (ws) => {
-  const subscription = tweets$
-    .shareReplay(10)
+  const subscription = searchTweets(QUERY)
     .concatMap(tweet => Observable.of(tweet).delay(randomDelayTime()))
+    .concat(tweets$)
     .subscribe(streamTo(ws));
 
   ws.on('close', () => {
-    subscription.dispose();
+    subscription.unsubscribe();
   });
 });
 
-app.use(cors({ origin: ORIGIN }));
+if (isProduction) {
+  app.use(cors({ origin: ORIGIN }));
+} else {
+  app.use(cors());
+}
 
 const usersCache = lru({
   max: 20,

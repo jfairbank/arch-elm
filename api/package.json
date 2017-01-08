@@ -8,13 +8,14 @@
     "elm-webpack-loader": "^4.0.0",
     "express": "^4.14.0",
     "lru-cache": "^4.0.2",
-    "rx": "^4.1.0",
+    "rxjs": "^5.0.3",
     "twitter": "^1.7.0",
     "ws": "^1.1.1"
   },
   "devDependencies": {
     "eslint": "^3.12.2",
     "eslint-config-airbnb-base": "^11.0.0",
-    "eslint-plugin-import": "^2.2.0"
+    "eslint-plugin-import": "^2.2.0",
+    "nodemon": "^1.11.0"
   }
 }
