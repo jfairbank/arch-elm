@@ -30,8 +30,7 @@ init =
 
 view : Model -> Html Msg
 view model =
-    div
-        []
+    div []
         [ Html.map ProfileMsg (Profile.view model.profile)
         , hr [] []
         , Html.map TwitterMsg (Twitter.view model.twitter)

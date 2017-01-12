@@ -2,10 +2,25 @@ module Profile exposing (..)
 
 import Http
 import Html exposing (..)
-import Html.Attributes exposing (class, src, type_, value)
+import Json.Decode exposing (string, Decoder)
+import Json.Decode.Pipeline exposing (required, decode)
 import Html.Events exposing (onClick, onInput)
-import Urls exposing (httpUrl)
-import User exposing (userDecoder, User)
+import Html.Attributes
+    exposing
+        ( class
+        , src
+        , type_
+        , value
+        , disabled
+        )
+
+
+type alias User =
+    { screenName : String
+    , name : String
+    , description : String
+    , profileImageUrl : String
+    }
 
 
 type alias Model =
@@ -16,42 +31,38 @@ type alias Model =
 
 type Msg
     = UpdateScreenName String
-    | FetchProfile
-    | Load (Result Http.Error User)
-    | Clear
-
-
-url : String -> String
-url screenName =
-    httpUrl ++ "/user/" ++ screenName
-
-
-userRequest : String -> Http.Request User
-userRequest screenName =
-    Http.get (url screenName) userDecoder
-
-
-getUser : String -> Cmd Msg
-getUser screenName =
-    Http.send Load (userRequest screenName)
+    | FetchUser
+    | LoadUser (Result Http.Error User)
 
 
 initialModel : Model
 initialModel =
-    { screenName = ""
-    , profile = Nothing
-    }
+    Model "" Nothing
 
 
-init : ( Model, Cmd msg )
+init : ( Model, Cmd Msg )
 init =
     ( initialModel, Cmd.none )
 
 
+profileView : User -> Html Msg
+profileView user =
+    let
+        displayName =
+            user.name ++ " (@" ++ user.screenName ++ ")"
+    in
+        div [ class "profile" ]
+            [ img [ src user.profileImageUrl ] []
+            , div []
+                [ h3 [] [ text displayName ]
+                , div [] [ text user.description ]
+                ]
+            ]
+
+
 loadProfileView : Model -> Html Msg
 loadProfileView model =
-    div
-        [ class "load-profile" ]
+    div [ class "load-profile" ]
         [ h4 [] [ text "Load Profile" ]
         , label [] [ text "Screen Name" ]
         , input
@@ -60,44 +71,44 @@ loadProfileView model =
             , onInput UpdateScreenName
             ]
             []
-        , p
-            []
-            [ button
-                [ class "btn btn-default", onClick FetchProfile ]
-                [ text "Load" ]
-            ]
-        ]
-
-
-displayName : User -> String
-displayName user =
-    user.name ++ " (@" ++ user.screenName ++ ")"
-
-
-profileView : User -> Html Msg
-profileView user =
-    div
-        [ class "profile" ]
-        [ img [ src user.profileImageUrl ] []
-        , div
-            []
-            [ h3 [] [ text (displayName user) ]
-            , div [] [ text user.description ]
-            ]
         , button
-            [ class "btn btn-default", onClick Clear ]
-            [ text "Clear" ]
+            [ disabled (model.screenName == "")
+            , onClick FetchUser
+            ]
+            [ text "Load" ]
+        , p [] [ text model.screenName ]
         ]
 
 
 view : Model -> Html Msg
 view model =
     case model.profile of
-        Just profile ->
-            div [] [ profileView profile ]
+        Just user ->
+            profileView user
 
         Nothing ->
-            div [] [ loadProfileView model ]
+            loadProfileView model
+
+
+userDecoder : Decoder User
+userDecoder =
+    decode User
+        |> required "screen_name" string
+        |> required "name" string
+        |> required "description" string
+        |> required "profile_image_url" string
+
+
+fetchUser : String -> Cmd Msg
+fetchUser screenName =
+    let
+        url =
+            "http://localhost:8081/user/" ++ screenName
+
+        request =
+            Http.get url userDecoder
+    in
+        Http.send LoadUser request
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -106,29 +117,19 @@ update msg model =
         UpdateScreenName screenName ->
             ( { model | screenName = screenName }, Cmd.none )
 
-        FetchProfile ->
-            if model.screenName == "" then
-                ( model, Cmd.none )
-            else
-                ( model, getUser model.screenName )
+        FetchUser ->
+            ( model, fetchUser model.screenName )
 
-        Load result ->
+        LoadUser result ->
             case result of
-                Ok profile ->
-                    ( { model
-                        | profile = Just profile
-                      }
-                    , Cmd.none
-                    )
+                Ok user ->
+                    ( { model | profile = Just user }, Cmd.none )
 
                 Err _ ->
                     ( model, Cmd.none )
 
-        Clear ->
-            ( { model | profile = Nothing }, Cmd.none )
 
-
-subscriptions : Model -> Sub msg
+subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.none
 

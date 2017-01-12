@@ -2,21 +2,27 @@
   "scripts": {
     "build": "webpack",
     "deploy": "NODE_ENV=production npm run build && cp CNAME public && surge public",
-    "dev": "webpack-dev-server --inline --hot --port 8000"
+    "dev": "webpack-dashboard -- webpack-dev-server --inline --port 8000"
   },
   "dependencies": {
+    "bootstrap-sass": "^3.3.7",
     "css-loader": "^0.26.1",
     "elm": "^0.18.0",
-    "elm-hot-loader": "^0.5.3",
-    "elm-webpack-loader": "^4.0.0",
+    "elm-hot-loader": "^0.5.4",
+    "elm-webpack-loader": "^4.1.1",
     "file-loader": "^0.9.0",
+    "node-sass": "^4.1.1",
+    "sass-loader": "^4.1.1",
     "style-loader": "^0.13.1",
+    "svg-loader": "^0.0.2",
+    "url-loader": "^0.5.7",
     "webpack": "^1.14.0",
     "webpack-dev-server": "^1.16.2"
   },
   "devDependencies": {
     "eslint": "^3.12.2",
     "eslint-config-airbnb-base": "^11.0.0",
-    "eslint-plugin-import": "^2.2.0"
+    "eslint-plugin-import": "^2.2.0",
+    "webpack-dashboard": "^0.2.0"
   }
 }

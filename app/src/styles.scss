@@ -1,0 +1,112 @@
+$icon-font-path: "~bootstrap-sass/assets/fonts/bootstrap/";
+@import '~bootstrap-sass/assets/stylesheets/bootstrap';
+
+body {
+  padding-top: 20px;
+}
+
+.syntax {
+  background: #000;
+  border-radius: 4px;
+  color: #0f0;
+  padding: 20px;
+
+  &:before {
+    content: '> ';
+  }
+}
+
+.load-profile {
+  display: inline-flex;
+  flex-direction: column;
+
+  label {
+    display: block;
+  }
+
+  button {
+    @extend .btn;
+    @extend .btn-primary;
+
+    margin-top: 10px;
+  }
+
+  p {
+    margin-top: 10px;
+  }
+}
+
+.profile {
+  // align-items: center;
+  // display: flex;
+  // flex-direction: row;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+
+  img {
+    margin-right: 20px;
+    margin-bottom: 10px;
+    width: 100px;
+  }
+
+  > div:nth-child(2) {
+    margin-bottom: 10px;
+
+    h3 {
+      font-size: 22px;
+      margin: 0 0 5px 0;
+    }
+  }
+
+  p {
+    margin-right: 20px;
+  }
+
+  button  {
+    @extend .btn;
+    @extend .btn-xs;
+    @extend .btn-danger;
+
+    margin-left: auto;
+  }
+}
+
+.twitter-start {
+  text-align: center;
+}
+
+.twitter-stream h2 {
+  background: #369;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 18px;
+  padding: 10px;
+  text-align: center;
+}
+
+.tweets {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.tweet {
+  background: #eee;
+  border-radius: 4px;
+  padding: 10px;
+}
+
+.tweet img {
+  display: inline-block;
+  margin-top: 10px;
+  width: 35%;
+}
+
+.tweet + .tweet {
+  margin-top: 20px;
+}
+
+.tweet h4 {
+  font-size: 16px;
+  margin: 0 0 5px 0;
+}

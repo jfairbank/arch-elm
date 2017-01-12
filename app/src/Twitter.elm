@@ -3,25 +3,27 @@ module Twitter exposing (..)
 import List
 import Html exposing (..)
 import Html.Attributes exposing (class, src)
-import Json.Decode exposing (decodeString, list, string, Decoder)
-import Json.Decode.Pipeline exposing (decode, optional, required)
-import Urls exposing (wsUrl)
-import User exposing (User, userDecoder)
+import User exposing (userDecoder, User)
+import Json.Decode
+    exposing
+        ( decodeString
+        , string
+        , bool
+        , Decoder
+        )
+import Json.Decode.Pipeline
+    exposing
+        ( decode
+        , required
+        , optional
+        )
 import WebSocket exposing (listen)
-
-
-type alias Photo =
-    { url : String }
-
-
-type alias Entities =
-    { photos : List Photo }
 
 
 type alias Tweet =
     { text : String
     , user : User
-    , entities : Entities
+    , retweeted : Bool
     }
 
 
@@ -33,29 +35,12 @@ type Msg
     = TweetMsg String
 
 
-url : String
-url =
-    wsUrl
-
-
-photoDecoder : Decoder Photo
-photoDecoder =
-    decode Photo
-        |> required "media_url" string
-
-
-entitiesDecoder : Decoder Entities
-entitiesDecoder =
-    decode Entities
-        |> optional "media" (list photoDecoder) []
-
-
 tweetDecoder : Decoder Tweet
 tweetDecoder =
     decode Tweet
         |> required "text" string
         |> required "user" userDecoder
-        |> required "entities" entitiesDecoder
+        |> optional "retweeted" bool False
 
 
 parseTweet : String -> Result String Tweet
@@ -73,52 +58,40 @@ init =
     ( initialModel, Cmd.none )
 
 
-photoView : Tweet -> Html msg
-photoView tweet =
-    case tweet.entities.photos of
-        [] ->
-            text ""
-
-        x :: xs ->
-            img [ src x.url ] []
-
-
-tweetView : Tweet -> Html msg
+tweetView : Tweet -> Html Msg
 tweetView tweet =
-    li
-        [ class "tweet" ]
+    li [ class "tweet" ]
         [ h4 [] [ text tweet.user.screenName ]
         , div [] [ text tweet.text ]
-        , photoView tweet
         ]
 
 
-tweetsView : List Tweet -> Html msg
-tweetsView tweets =
-    List.take 10 tweets
-        |> List.map tweetView
-        |> ul [ class "tweets" ]
+isRetweet : Tweet -> Bool
+isRetweet tweet =
+    tweet.retweeted || String.startsWith "RT" tweet.text
 
 
-twitterStreamView : List Tweet -> Html msg
-twitterStreamView tweets =
-    div
-        [ class "twitter-stream" ]
+tweetsView : Model -> Html Msg
+tweetsView =
+    List.filter (not << isRetweet)
+        >> List.take 50
+        >> List.map tweetView
+        >> ul [ class "tweets" ]
+
+
+view : Model -> Html Msg
+view tweets =
+    div [ class "twitter-stream" ]
         [ h2 [] [ text "Twitter Stream for #codemash" ]
         , tweetsView tweets
         ]
 
 
-view : Model -> Html Msg
-view tweets =
-    twitterStreamView tweets
-
-
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg tweets =
     case msg of
-        TweetMsg message ->
-            case parseTweet message of
+        TweetMsg rawTweet ->
+            case parseTweet rawTweet of
                 Ok tweet ->
                     ( tweet :: tweets, Cmd.none )
 
@@ -127,8 +100,8 @@ update msg tweets =
 
 
 subscriptions : Model -> Sub Msg
-subscriptions _ =
-    listen url TweetMsg
+subscriptions model =
+    listen "ws://localhost:8081" TweetMsg
 
 
 main : Program Never Model Msg

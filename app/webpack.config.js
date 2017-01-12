@@ -1,14 +1,11 @@
 const path = require('path');
 const webpack = require('webpack');
+const DashboardPlugin = require('webpack-dashboard/plugin');
 
 const production = process.env.NODE_ENV === 'production';
 
 const config = {
-  entry: [
-    path.resolve(__dirname, 'src/index.html'),
-    path.resolve(__dirname, 'src/styles.css'),
-    path.resolve(__dirname, 'src/index.js'),
-  ],
+  entry: path.resolve(__dirname, 'src/index.js'),
 
   output: {
     path: path.resolve(__dirname, 'public'),
@@ -30,20 +27,48 @@ const config = {
         loader: 'file?name=[name].[ext]',
       },
       {
-        test: /\.css$/,
-        loader: 'style!css',
+        test: /\.scss$/,
+        loader: 'style!css!sass',
       },
       {
         test: /\.elm$/,
         exclude: /elm-stuff|node_modules/,
-        loader: 'elm-hot!elm-webpack',
+        // loader: 'elm-hot!elm-webpack',
+        loader: 'elm-webpack',
+      },
+      {
+        test: /\.eot(\?(v=\d+\.\d+\.\d+|\w+))?$/,
+        loader: 'file-loader',
+      },
+      {
+        test: /\.(woff|woff2)(\?(v=\d+\.\d+\.\d+|\w+))?$/,
+        loader: 'url-loader?prefix=font/&limit=5000',
+      },
+      {
+        test: /\.ttf(\?(v=\d+\.\d+\.\d+|\w+))?$/,
+        loader: 'url-loader?limit=10000&mimetype=application/octet-stream',
+      },
+      {
+        test: /\.svg$/,
+        loader: 'svg-loader',
       },
     ],
 
     noParse: /\.elm$/,
   },
 
+  // sassLoader: {
+  //   includePaths: [
+  //     path.resolve(__dirname, 'src'),
+  //     // path.resolve(__dirname, 'src/vendors/bootstrap/assets/stylesheets'),
+  //   ],
+  // },
+
   plugins: [],
+
+  devServer: {
+    stats: 'errors-only',
+  },
 };
 
 if (production) {
@@ -64,6 +89,8 @@ if (production) {
     // eslint-disable-next-line comma-dangle
     new webpack.optimize.OccurenceOrderPlugin()
   );
+} else {
+  config.plugins.push(new DashboardPlugin());
 }
 
 module.exports = config;

@@ -1,6 +1,9 @@
 /* eslint-disable */
 'use strict';
 
-var Elm = require('./Main');
+require('./index.html');
+require('./styles.scss');
 
-Elm.Main.embed(document.getElementById('main'));
+var Elm = require('./Profile');
+
+Elm.Profile.embed(document.getElementById('main'));

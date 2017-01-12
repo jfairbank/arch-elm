@@ -9,7 +9,8 @@ type alias Config =
 
 devConfig : Config
 devConfig =
-    { domain = "twitter-stream.dev"
+    -- { domain = "twitter-stream.dev"
+    { domain = "localhost:8081"
     , secure = False
     }
 
@@ -23,7 +24,7 @@ prodConfig =
 
 config : Config
 config =
-    prodConfig
+    devConfig
 
 
 prefix : String -> String

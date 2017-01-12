@@ -1,7 +1,8 @@
+myList = [1, 2, 3, 4, 5]
+
 double n = n * 2
-list = [1, 2, 3]
 
-List.map double list  -- [2, 4, 6]
+doubleNumbers list =
+    List.map double list
 
-
-List.map ((*) 2) list -- [2, 4, 6]
+doubleNumbers myList -- [2, 4, 6, 8, 10]

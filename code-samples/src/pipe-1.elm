@@ -1,9 +1,7 @@
 list = List.range 1 10
-
-List.map (\n -> n * n) (List.filter ((<) 6) (List.map ((*) 2) list))
-
+square n = n * n
 
 list
   |> List.map ((*) 2)
   |> List.filter ((<) 6)
-  |> List.map (\n -> n * n)
+  |> List.map square
